@@ -83,18 +83,24 @@ public class Chat {
 		channel.setProtocolStack(stack);
 		stack.init();
 		
+		channel.setReceiver(new Receiver(multicastAddress));
+		
 		channel.connect(multicastAddress);
 		return channel;
 	}
 	
-	static  JChannel newChannel(String clusterName) throws Exception {
+	static  JChannel newChannel(String clusterName, ChatManagementReceiverAdapter receiver) throws Exception {
 		JChannel channel = new JChannel(false);
 		ProtocolStack stack = defaultStack();
 		
 		channel.setProtocolStack(stack);
 		stack.init();
 		
+		channel.setReceiver(receiver);
+		
 		channel.connect(clusterName);
+		
+		channel.getState(null, 10000);
 		return channel;
 	}
 	
@@ -111,14 +117,14 @@ public class Chat {
 	private Map<String, JChannel> channels = null;
 	
 	public Chat() {
+		manager = new ChatManagementReceiverAdapter();
 		try {
-			chatManagmentChannel = newChannel(chatManagementClusterName);
+			chatManagmentChannel = newChannel(chatManagementClusterName, manager);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(-1);
 		}
 		
-		manager = new ChatManagementReceiverAdapter(chatManagmentChannel);
 		channels = new HashMap<String, JChannel>();
 	}
 	
@@ -189,7 +195,7 @@ public class Chat {
 			
 			notifyOthersAboutJoining(multicastAddress, nick);
 			
-			channel.setReceiver(new Receiver(multicastAddress));
+//			channel.setReceiver(new Receiver(multicastAddress));
 			
 		} catch(Exception e) {
 			System.out.println("Blad podczas tworzenia nowego kanalu");
@@ -207,7 +213,7 @@ public class Chat {
 			
 			notifyOthersAboutJoining(multicastAddress, nick);
 			
-			channel.setReceiver(new Receiver(multicastAddress));
+//			channel.setReceiver(new Receiver(multicastAddress));
 			
 		} catch(Exception e) {
 			System.out.println("Blad podczas dolaczania do kanalu");

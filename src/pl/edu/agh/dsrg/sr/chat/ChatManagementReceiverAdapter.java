@@ -22,29 +22,32 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 public class ChatManagementReceiverAdapter extends ReceiverAdapter {
 
-	private JChannel channel;
+//	private JChannel channel;
 	
 	private Map<String, LinkedList<String>> state;
 	
-	public ChatManagementReceiverAdapter(JChannel channel) {
-		this.channel = channel;
-		this.channel.setReceiver(this);
+	public ChatManagementReceiverAdapter() {
+//		this.channel = channel;
+//		this.channel.setReceiver(this);
 		state = new HashMap<String, LinkedList<String>>();
-		try {
-			this.channel.getState(null, 10000);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			this.channel.getState(null, 10000);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
     public void viewAccepted(View new_view) {
+		super.viewAccepted(new_view);
         System.out.println("** view: " + new_view);
     }
 
 	@Override
     public void receive(Message msg) {
 				
+		System.out.println("Manager received message");
+		
 		ChatAction action = null;
 		action = (ChatAction) msg.getObject();
 
@@ -111,7 +114,7 @@ public class ChatManagementReceiverAdapter extends ReceiverAdapter {
     }
 	
 	void close() {
-		this.channel.close();
+//		this.channel.close();
 	}
 	
 	String listChannels() {
